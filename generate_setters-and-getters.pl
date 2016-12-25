@@ -144,8 +144,6 @@ sub emit_setter {
   my $fname = shift;
   my $txt0 = shift;
 
-  print STDERR "$fname\n";
-
   die "bad function name $fname"
     unless $fname =~ m/${sprefix}(\S+)/ ;
 

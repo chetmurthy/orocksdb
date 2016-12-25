@@ -1,6 +1,7 @@
 OCAML_LIBDIR?=`ocamlfind printconf destdir`
 OCAML_FIND ?= ocamlfind
 
+ROCKS_VERSION ?= 4.11.2
 ROCKS_INSTALL ?= /usr/local
 ROCKS_LIBDIR ?= $(ROCKS_INSTALL)/lib
 ROCKS_LIB ?= rocksdb
@@ -22,7 +23,7 @@ clean:
 	rm -f rocks_options.ml
 
 setup::
-	./generate_setters-and-getters.pl --verbose --rocks-install=$(ROCKS_INSTALL) < rocks_options.ML > rocks_options.ml
+	unifdef -D ROCKS_VERSION=$(rocks_version)  < rocks_options.ML | ./generate_setters-and-getters.pl --rocks-install=$(ROCKS_INSTALL) > rocks_options.ml
 
 install:
 	mkdir -p $(OCAML_LIBDIR)
