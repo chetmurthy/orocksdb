@@ -6,6 +6,12 @@ ROCKS_INSTALL ?= /usr/local
 ROCKS_LIBDIR ?= $(ROCKS_INSTALL)/lib
 ROCKS_LIB ?= rocksdb
 
+ifeq (ROCKS_VERSION,"myrocks")
+  UNIFDEF_ARGS = -D ROCKS_VERSION_MYROCKS
+else
+  UNIFDEF_ARGS = -U ROCKS_VERSION_MYROCKS
+endif
+
 ROCKS_LINKFLAGS = \
   -lflag -cclib -lflag -Wl,-rpath=$(ROCKS_LIBDIR) \
   -lflags -cclib,-L$(ROCKS_LIBDIR),-cclib,-l$(ROCKS_LIB)
@@ -23,7 +29,7 @@ clean:
 	rm -f rocks_options.ml
 
 setup::
-	unifdef -D ROCKS_VERSION=$(rocks_version)  < rocks_options.ML | ./generate_setters-and-getters.pl --rocks-install=$(ROCKS_INSTALL) > rocks_options.ml
+	unifdef $(UNIFDEF_ARGS)  < rocks_options.ML | ./generate_setters-and-getters.pl --rocks-install=$(ROCKS_INSTALL) > rocks_options.ml
 
 install:
 	mkdir -p $(OCAML_LIBDIR)

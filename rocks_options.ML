@@ -115,6 +115,9 @@ module Options = struct
     skip rocksdb_options_set_filter_deletes
     skip rocksdb_options_set_memtable_prefix_bloom_bits rocksdb_options_set_memtable_prefix_bloom_probes
     override rocksdb_options_set_filter_deletes Views.bool_to_uchar
+#ifdef ROCKS_VERSION_MYROCKS
+    skip rocksdb_options_set_ratelimiter
+#endif
 #END
 end
 
