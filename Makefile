@@ -1,7 +1,8 @@
 OCAML_LIBDIR?=`ocamlfind printconf destdir`
 OCAML_FIND ?= ocamlfind
 
-ROCKS_LIBDIR ?= /usr/local/lib
+ROCKS_INSTALL ?= /usr/local
+ROCKS_LIBDIR ?= $(ROCKS_INSTALL)/lib
 ROCKS_LIB ?= rocksdb
 
 ROCKS_LINKFLAGS = \
@@ -18,6 +19,10 @@ test:
 clean:
 	ocamlbuild -clean
 	rm -rf aname
+	rm -f rocks_options.ml
+
+setup::
+	./generate_setters-and-getters.pl --verbose --rocks-install=$(ROCKS_INSTALL) < rocks_options.ML > rocks_options.ml
 
 install:
 	mkdir -p $(OCAML_LIBDIR)

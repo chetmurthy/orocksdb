@@ -34,6 +34,12 @@ module Views = struct
       ~write:UInt32.of_int
       uint32_t
 
+  let int_to_int32_t =
+    view
+      ~read:Int32.to_int
+      ~write:Int32.of_int
+      int32_t
+
   let int_to_uint64_t =
     view
       ~read:UInt64.to_int
@@ -107,6 +113,11 @@ module type S = sig
   val with_t : (t -> 'a) -> 'a
 
   val create_setter : string -> 'a Ctypes.typ -> t -> 'a -> unit
+  val create_setter0 : string -> t -> unit
+  val create_setter1 : string -> 'a Ctypes.typ -> t -> 'a -> unit
+  val create_setter2 : string -> 'a Ctypes.typ -> 'b Ctypes.typ -> t -> 'a -> 'b -> unit
+  val create_setter3 : string -> 'a Ctypes.typ -> 'b Ctypes.typ -> 'c Ctypes.typ -> t -> 'a -> 'b -> 'c -> unit
+  val create_setter4 : string -> 'a Ctypes.typ -> 'b Ctypes.typ -> 'c Ctypes.typ -> 'd Ctypes.typ -> t -> 'a -> 'b -> 'c -> 'd -> unit
 end
 
 module CreateConstructors(T : RocksType) = struct
@@ -136,10 +147,31 @@ module CreateConstructors(T : RocksType) = struct
       (fun () -> f t)
       (fun () -> destroy t)
 
+  let create_setter0 property_name =
+    foreign
+      (T.setter_prefix ^ property_name)
+      (t @-> returning void)
+
   let create_setter property_name property_typ =
     foreign
       (T.setter_prefix ^ property_name)
       (t @-> property_typ @-> returning void)
+
+  let create_setter1 = create_setter
+  let create_setter2 property_name property_typ1 property_typ2 =
+    foreign
+      (T.setter_prefix ^ property_name)
+      (t @-> property_typ1 @-> property_typ2 @-> returning void)
+
+  let create_setter3 property_name property_typ1 property_typ2 property_typ3 =
+    foreign
+      (T.setter_prefix ^ property_name)
+      (t @-> property_typ1 @-> property_typ2 @-> property_typ3 @-> returning void)
+
+  let create_setter4 property_name property_typ1 property_typ2 property_typ3 property_typ4 =
+    foreign
+      (T.setter_prefix ^ property_name)
+      (t @-> property_typ1 @-> property_typ2 @-> property_typ3 @-> property_typ4 @-> returning void)
 end
 
 module CreateConstructors_(T : RocksType') = struct
