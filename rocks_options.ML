@@ -121,6 +121,7 @@ module Options = struct
     override rocksdb_options_set_filter_deletes Views.bool_to_uchar
 #ifdef ROCKS_VERSION_MYROCKS
     skip rocksdb_options_set_ratelimiter
+    add rocksdb_options_set_myrocks_comparator rocksdb_options_set_rev_myrocks_comparator
 #endif
 #END
 end

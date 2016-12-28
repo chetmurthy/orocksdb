@@ -10,25 +10,33 @@ our $rocks_install ;
 our $verbose ;
 our @skip ;
 our $skip_to ;
+our @c_headers ;
 
 GetOptions(
 	   "verbose" => \$verbose,
 	   "skip=s" => \@skip,
 	   "skip-to=s" => \$skip_to,
 	   "rocks-install=s", => \$rocks_install,
+	   "c-header=s", => \@c_headers,
 	  ) or die("Error in command-line arguments") ;
 
 assert (!@ARGV, "no extra args are allowd") ;
 
-assert (-f "$rocks_install/include/rocksdb/c.h", "no such rocksdb install $rocks_install");
+foreach my $h (@c_headers) {
+  assert (-f $h, "no such C header $h");
+}
 
-our $cheader = "$rocks_install/include/rocksdb/c.h" ;
+our $full_headers ;
+{
+  foreach my $f (@c_headers) {
+    $full_headers .= f_contents($f) ;
+  }
+}
 
 {
   if (0) {
-    my $full = f_contents($cheader) ;
     load_externals(
-		   'content' => $full,
+		   'content' => $full_headers,
 		   'skip' => \@skip,
 		   'parse_fully' => 1,
 		  ) ;
@@ -109,7 +117,7 @@ sub expand {
   my %adds = () ;
   foreach my $s (@add) { $adds{$s} = 1 } ;
 
-  my $txt = f_contents($cheader) ;
+  my $txt = $full_headers ;
   unless ($txt =~ s,.*($spat.*$epat).*,$1,s) {
     die "no text matches $spat .... $epat\n" ;
   }
@@ -120,7 +128,7 @@ sub expand {
 			  ) ;
   {
     my @allext = load_externals(
-			   'content' => f_contents($cheader) ,
+			   'content' => $full_headers ,
 			   'skip' => [],
 			   'parse_fully'=> 0,
 			  ) ;
