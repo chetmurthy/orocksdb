@@ -96,7 +96,11 @@ module Options = struct
 
 #BEGIN setters-and-getters
     start-pattern "/* Options */"
+#ifdef ROCKS_VERSION_MYROCKS
+    end-pattern "/* RateLimiter */"
+#else
     end-pattern "/* Compaction Filter */"
+#endif
     name "options"
     setter-prefix "rocksdb_options_"
     skip rocksdb_options_create rocksdb_options_destroy
